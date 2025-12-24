@@ -1,0 +1,131 @@
+import { useEffect, useState } from 'react';
+import { useApp } from '@/contexts/AppContext';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, Wallet } from 'lucide-react';
+import { toast } from 'sonner';
+
+export const AccountSelectionModal = () => {
+  const { user, budget, activeAccount, setActiveAccount, createAccount } = useApp();
+  const [isOpen, setIsOpen] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
+  
+  // Create Form State
+  const [newName, setNewName] = useState('');
+  const [newType, setNewType] = useState('bank'); // Default is 'bank'
+
+  useEffect(() => {
+    // Open if user is logged in BUT no account is selected (or set to 'all' initially)
+    if (user && activeAccount === 'all') {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  }, [user, activeAccount]);
+
+  const handleSelect = (accountName: string) => {
+    setActiveAccount(accountName);
+    setIsOpen(false);
+    toast.success(`Switched to ${accountName}`);
+  };
+
+  const handleCreate = async () => {
+    if (!newName) return; // Removed balance check
+    try {
+      await createAccount({
+        name: newName,
+        type: newType as any,
+        balance: 0 // Default balance is now always 0
+      });
+      setActiveAccount(newName); // Auto select new account
+      setIsOpen(false);
+      setShowCreate(false);
+      setNewName(''); // Reset form
+      setNewType('bank');
+    } catch (e) {
+      toast.error("Failed to create account");
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={() => {}}>
+      {/* preventDefault onInteractOutside forces user to choose */}
+      <DialogContent className="glass-card sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Select Active Account</DialogTitle>
+          <DialogDescription>
+            Choose which wallet/bank you want to manage right now.
+          </DialogDescription>
+        </DialogHeader>
+
+        {!showCreate ? (
+          <div className="space-y-4">
+            <div className="grid gap-2 max-h-[300px] overflow-y-auto">
+              {budget.accounts.length === 0 && (
+                <p className="text-center text-sm text-muted-foreground py-4">No accounts found.</p>
+              )}
+              {budget.accounts.map((acc) => (
+                <Button
+                  key={acc.id}
+                  variant="outline"
+                  className="w-full justify-between h-14 rounded-xl border-primary/20 hover:bg-primary/10"
+                  onClick={() => handleSelect(acc.name)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-primary/10 rounded-full">
+                      <Wallet className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="text-left">
+                      <p className="font-semibold">{acc.name}</p>
+                      <p className="text-xs text-muted-foreground capitalize">{acc.type}</p>
+                    </div>
+                  </div>
+                  {/* Optional: Remove displaying balance here if you don't want it shown yet */}
+                  {/* <span className="font-mono">₹{acc.balance.toLocaleString()}</span> */}
+                </Button>
+              ))}
+            </div>
+            
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+              <div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">Or</span></div>
+            </div>
+
+            <Button onClick={() => setShowCreate(true)} className="w-full gradient-primary rounded-xl">
+              <Plus className="w-4 h-4 mr-2" /> Create New Account
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4 animate-slide-up">
+            <Input 
+              placeholder="Account Name (e.g. SBI Savings)" 
+              value={newName} 
+              onChange={e => setNewName(e.target.value)} 
+              className="input-glass rounded-xl"
+            />
+            
+            {/* <Select value={newType} onValueChange={setNewType}>
+              <SelectTrigger className="input-glass rounded-xl">
+                <SelectValue placeholder="Select Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="bank">Bank Account</SelectItem>
+                <SelectItem value="wallet">Mobile Wallet</SelectItem>
+                <SelectItem value="cash">Cash</SelectItem>
+              </SelectContent>
+            </Select> */}
+            
+            {/* Balance Input Removed */}
+            
+            <div className="flex gap-2 pt-2">
+              <Button variant="ghost" onClick={() => setShowCreate(false)} className="flex-1 rounded-xl">Back</Button>
+              <Button onClick={handleCreate} className="flex-1 gradient-primary rounded-xl">Create</Button>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};

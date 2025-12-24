@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light Mode */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222 47% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221 83% 53%;
+
+    --radius: 1rem;
+  }
+
+  .dark {
+    /* Dark Mode */
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/20;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-xl border border-border/60 shadow-sm transition-all duration-300;
+  }
+  
+  .glass-card-hover {
+    @apply glass-card hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 hover:border-primary/20;
+  }
+
+  .gradient-primary {
+    @apply bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg shadow-blue-500/20 transition-all;
+  }
+  
+  /* ✅ FIXED: Added text-foreground and placeholder color explicitly */
+  .input-glass {
+    @apply bg-secondary/50 border-transparent focus:bg-background focus:border-primary/20 focus:ring-4 focus:ring-blue-500/10 transition-all rounded-2xl text-foreground placeholder:text-muted-foreground;
+  }
+
+  /* Status Colors */
+  .stat-positive { @apply text-emerald-600 dark:text-emerald-400; }
+  .stat-negative { @apply text-rose-600 dark:text-rose-400; }
+
+  /* Calendar styling */
+  .calendar-day {
+    @apply aspect-square flex flex-col items-center justify-center rounded-xl text-sm transition-all duration-200 cursor-pointer hover:bg-primary/10 hover:scale-105 text-foreground;
+  }
+  
+  [data-sonner-toast] {
+    @apply !bg-card !border-border !text-foreground font-sans;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+  .animate-slide-up { animation: slideUp 0.4s ease-out; }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
