@@ -33,7 +33,7 @@ export interface Transaction {
   account: string; 
 }
 
-// ✅ Added Goal Interface
+// ✅ Ensuring Goal is defined
 export interface Goal {
   id: string;
   name: string;
@@ -51,8 +51,9 @@ export interface Budget {
     phone: number;        
     subscriptions: number; 
   };
-  config?: string; // Stores JSON string of Paid Status & Lists
-  goals: Goal[];   // ✅ Uses the Goal interface
+  // ✅ Ensuring config is optional string
+  config?: string; 
+  goals: Goal[];
   accounts: Account[];
 }
 
