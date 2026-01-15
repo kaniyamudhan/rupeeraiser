@@ -3,7 +3,7 @@ from app.config import settings
 import certifi
 import logging
 import os
-
+#
 # Set up logging to see DB errors in terminal
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
