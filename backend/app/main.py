@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth, transactions, ai, accounts, goals, budget, habits  
-from app.database import client # Import the client to test connection
+from app.database import client 
 import logging
+import uvicorn
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)
@@ -10,16 +11,25 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="RupeeRiser API")
 
-# CORS Configuration
+# ✅ FIXED CORS CONFIGURATION
+# This allows connections from localhost, 127.0.0.1, and any other IP (like mobile)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000", "http://localhost:8080", "*"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:8080",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:8080",
+        "*"  # Allows mobile devices on the same network to connect
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- NEW: Test DB Connection on Startup ---
+# --- Test DB Connection on Startup ---
 @app.on_event("startup")
 async def startup_db_client():
     try:
@@ -37,12 +47,12 @@ app.include_router(ai.router)
 app.include_router(accounts.router)
 app.include_router(goals.router)
 app.include_router(budget.router)
-app.include_router(habits.router)  # ← This line must be there
+app.include_router(habits.router) 
 
 @app.get("/")
 def read_root():
     return {"message": "RupeeRiser API is running 🚀"}
 
 if __name__ == "__main__":
-    import uvicorn
+    # Host 0.0.0.0 allows access from other devices (like your mobile) on the same network
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
