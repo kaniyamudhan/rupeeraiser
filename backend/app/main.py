@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 app = FastAPI(title="RupeeRiser API")
 
 # ✅ FIXED CORS CONFIGURATION
-# This allows connections from localhost, 127.0.0.1, and any other IP (like mobile)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -22,7 +21,8 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:8080",
-        "*"  # Allows mobile devices on the same network to connect
+        "https://rupeeraiser.vercel.app", # Your Vercel URL
+        "*" 
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -54,5 +54,4 @@ def read_root():
     return {"message": "RupeeRiser API is running 🚀"}
 
 if __name__ == "__main__":
-    # Host 0.0.0.0 allows access from other devices (like your mobile) on the same network
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
